@@ -1,0 +1,88 @@
+.statCard {
+  position: relative;
+  padding: var(--space-6);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-backdrop);
+  -webkit-backdrop-filter: var(--glass-backdrop);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: all var(--transition-base);
+}
+
+.statCard:hover {
+  border-color: var(--color-border-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.gradientBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+.blue { background: linear-gradient(90deg, var(--color-secondary), var(--color-secondary-light)); }
+.red { background: linear-gradient(90deg, var(--color-danger), var(--color-accent)); }
+.amber { background: linear-gradient(90deg, var(--color-warning), var(--color-warning-light)); }
+.green { background: linear-gradient(90deg, var(--color-success), var(--color-success-light)); }
+
+.top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xl);
+}
+
+.icon.blue { background: rgba(37, 99, 235, 0.15); }
+.icon.red { background: rgba(220, 38, 38, 0.15); }
+.icon.amber { background: rgba(245, 158, 11, 0.15); }
+.icon.green { background: rgba(16, 185, 129, 0.15); }
+
+.delta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-full);
+}
+
+.deltaUp {
+  color: var(--color-danger-light);
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.deltaDown {
+  color: var(--color-success);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.value {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--space-1);
+  font-variant-numeric: tabular-nums;
+  animation: countUp 0.6s ease forwards;
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}

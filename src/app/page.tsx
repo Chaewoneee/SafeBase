@@ -1,66 +1,104 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
 
-export default function Home() {
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
+import styles from './login.module.css';
+
+export default function LoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      const supabase = createClient();
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) {
+        setError('이메일 또는 비밀번호가 올바르지 않습니다. (가입이 필요할 수 있습니다)');
+        return;
+      }
+
+      router.push('/dashboard');
+      router.refresh();
+    } catch {
+      setError('로그인 중 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className={styles.container}>
+      {/* Animated Background Glows */}
+      <div className={`${styles.bgGlow} ${styles.bgGlow1}`} />
+      <div className={`${styles.bgGlow} ${styles.bgGlow2}`} />
+      <div className={`${styles.bgGlow} ${styles.bgGlow3}`} />
+
+      <div className={styles.card}>
+        <div className={styles.logoArea}>
+          <div className={styles.logoIcon}>SB</div>
+          <h1 className={styles.title}>SafeBase</h1>
+          <p className={styles.subtitle}>KBO 리그 AI 기반 티켓 이상 거래 탐지 시스템</p>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+
+        <form className={styles.form} onSubmit={handleSubmit}>
+          {error && <div className={styles.error}>{error}</div>}
+
+          <div className={styles.field}>
+            <label htmlFor="email" className={styles.label}>이메일</label>
+            <input
+              id="email"
+              type="email"
+              className={styles.input}
+              placeholder="admin@safebase.kr"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
             />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="password" className={styles.label}>비밀번호</label>
+            <input
+              id="password"
+              type="password"
+              className={styles.input}
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="current-password"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className={styles.submitBtn}
+            disabled={loading}
           >
-            Documentation
-          </a>
+            {loading ? '로그인 중...' : '로그인'}
+          </button>
+        </form>
+
+        <div style={{ marginTop: '1.5rem' }}>
+          <div className={styles.divider}>데모 계정</div>
+          <div className={styles.demoNotice}>
+            <strong>admin@safebase.kr</strong> / <strong>admin1234</strong>
+          </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
