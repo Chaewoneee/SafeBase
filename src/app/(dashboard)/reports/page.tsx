@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
@@ -10,6 +11,7 @@ import styles from './page.module.css';
 const PER_PAGE = 20;
 
 export default function ReportsPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [reports, setReports] = useState<any[]>([]);
   const [filtered, setFiltered] = useState<any[]>([]);
@@ -79,17 +81,15 @@ export default function ReportsPage() {
             </thead>
             <tbody>
               {paged.map(report => (
-                <tr key={report.id}>
-                  <td>
-                    <Link href={`/reports/${report.id}`} className={styles.rowLink}>
-                      {new Date(report.created_at).toLocaleDateString('ko-KR')}
-                    </Link>
-                  </td>
+                <tr 
+                  key={report.id}
+                  className={styles.clickableRow}
+                  onClick={() => router.push(`/reports/${report.id}`)}
+                >
+                  <td>{new Date(report.created_at).toLocaleDateString('ko-KR')}</td>
                   <td>{report.reporter_name}</td>
                   <td>
-                    <Link href={`/reports/${report.id}`} className={styles.rowLink}>
-                      <span className={styles.description}>{report.description}</span>
-                    </Link>
+                    <span className={styles.description}>{report.description}</span>
                   </td>
                   <td style={{ fontFamily: 'monospace', fontSize: '12px' }}>
                     {report.transaction_id ? (

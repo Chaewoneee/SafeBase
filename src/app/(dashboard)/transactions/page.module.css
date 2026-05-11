@@ -102,9 +102,13 @@
   background: rgba(249, 115, 22, 0.05);
 }
 
-.rowLink {
-  display: contents;
+.clickableRow {
   cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.clickableRow:hover {
+  background: var(--color-surface-hover) !important;
 }
 
 .accountId {

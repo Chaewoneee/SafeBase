@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import { createClient } from '@/lib/supabase/client';
@@ -11,6 +11,7 @@ import styles from './page.module.css';
 const PER_PAGE = 20;
 
 export default function TransactionsPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
   const [filtered, setFiltered] = useState<Transaction[]>([]);
@@ -113,12 +114,12 @@ export default function TransactionsPage() {
               {paged.map(tx => {
                 const ratio = tx.resale_price ? Math.round((tx.resale_price / tx.original_price) * 100) : 100;
                 return (
-                  <tr key={tx.id} className={tx.risk_level === 'DANGER' ? styles.rowDanger : undefined}>
-                    <td>
-                      <Link href={`/transactions/${tx.id}`} className={styles.rowLink}>
-                        {new Date(tx.created_at).toLocaleString('ko-KR')}
-                      </Link>
-                    </td>
+                  <tr 
+                    key={tx.id} 
+                    className={`${styles.clickableRow} ${tx.risk_level === 'DANGER' ? styles.rowDanger : ''}`}
+                    onClick={() => router.push(`/transactions/${tx.id}`)}
+                  >
+                    <td>{new Date(tx.created_at).toLocaleString('ko-KR')}</td>
                     <td>{tx.account_id}</td>
                     <td>{tx.team}</td>
                     <td>{tx.seat_info}</td>
