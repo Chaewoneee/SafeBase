@@ -7,33 +7,31 @@ import styles from './login.module.css';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleBypassLogin = async () => {
     setError('');
     setLoading(true);
 
     try {
       const supabase = createClient();
+      // 심사용 자동 접속 (데모 계정으로 강제 로그인)
       const { error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+        email: 'admin@safebase.kr',
+        password: 'admin1234',
       });
 
       if (authError) {
-        setError('이메일 또는 비밀번호가 올바르지 않습니다. (가입이 필요할 수 있습니다)');
+        setError('자동 로그인에 실패했습니다. 데이터베이스 연결을 확인해주세요.');
+        setLoading(false);
         return;
       }
 
       router.push('/dashboard');
       router.refresh();
     } catch {
-      setError('로그인 중 오류가 발생했습니다.');
-    } finally {
+      setError('접속 중 오류가 발생했습니다.');
       setLoading(false);
     }
   };
@@ -52,51 +50,24 @@ export default function LoginPage() {
           <p className={styles.subtitle}>KBO 리그 AI 기반 티켓 이상 거래 탐지 시스템</p>
         </div>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <div className={styles.form}>
           {error && <div className={styles.error}>{error}</div>}
 
-          <div className={styles.field}>
-            <label htmlFor="email" className={styles.label}>이메일</label>
-            <input
-              id="email"
-              type="email"
-              className={styles.input}
-              placeholder="admin@safebase.kr"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoComplete="email"
-            />
-          </div>
-
-          <div className={styles.field}>
-            <label htmlFor="password" className={styles.label}>비밀번호</label>
-            <input
-              id="password"
-              type="password"
-              className={styles.input}
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete="current-password"
-            />
+          <div style={{ textAlign: 'center', marginBottom: '2rem', color: 'var(--color-text-secondary)', lineHeight: '1.6' }}>
+            <strong style={{ color: 'var(--color-primary-light)', fontSize: '1.1rem', display: 'block', marginBottom: '0.5rem' }}>
+              심사용 임시 접속 페이지
+            </strong>
+            현재 심사 편의를 위해 로그인 기능이 해제되어 있습니다.<br />
+            아래 버튼을 클릭하시면 데모 계정으로 자동 접속됩니다.
           </div>
 
           <button
-            type="submit"
+            onClick={handleBypassLogin}
             className={styles.submitBtn}
             disabled={loading}
           >
-            {loading ? '로그인 중...' : '로그인'}
+            {loading ? '입장 중...' : '대시보드 입장하기'}
           </button>
-        </form>
-
-        <div style={{ marginTop: '1.5rem' }}>
-          <div className={styles.divider}>데모 계정</div>
-          <div className={styles.demoNotice}>
-            <strong>admin@safebase.kr</strong> / <strong>admin1234</strong>
-          </div>
         </div>
       </div>
     </div>
