@@ -17,21 +17,40 @@ export default function LoginPage() {
     try {
       const supabase = createClient();
       // 심사용 자동 접속 (데모 계정으로 강제 로그인)
-      const { error: authError } = await supabase.auth.signInWithPassword({
+      let { error: authError } = await supabase.auth.signInWithPassword({
         email: 'admin@safebase.kr',
         password: 'admin1234',
       });
 
+      // 만약 계정이 없다면 자동 가입 시도
+      if (authError && authError.message.includes('Invalid login credentials')) {
+        const { error: signUpError } = await supabase.auth.signUp({
+          email: 'admin@safebase.kr',
+          password: 'admin1234',
+        });
+        
+        if (!signUpError) {
+          // 가입 성공 시 다시 로그인 시도
+          const retry = await supabase.auth.signInWithPassword({
+            email: 'admin@safebase.kr',
+            password: 'admin1234',
+          });
+          authError = retry.error;
+        }
+      }
+
       if (authError) {
-        setError('자동 로그인에 실패했습니다. 데이터베이스 연결을 확인해주세요.');
+        console.error("Auth Error:", authError);
+        setError(`자동 로그인 실패: ${authError.message}`);
         setLoading(false);
         return;
       }
 
       router.push('/dashboard');
       router.refresh();
-    } catch {
-      setError('접속 중 오류가 발생했습니다.');
+    } catch (err: any) {
+      console.error("Login Exception:", err);
+      setError(`접속 중 오류가 발생했습니다: ${err.message || '알 수 없는 오류'}`);
       setLoading(false);
     }
   };
